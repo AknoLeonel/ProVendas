@@ -1,16 +1,14 @@
-
-
 {% extends "template.html" %}
-
 {% load static %}
+
 {% block title %}
-    Lista de Usuarios
+Lista de Usuários
 {% endblock %}
 
 {% block content %}
 
 <style>
-    .imagemProdutos{
+    .imagemProdutos {
         width: 11%;
         background: #fff;
         position: inherit;
@@ -19,21 +17,49 @@
         border-radius: 50%;
     }
 
-    .table td, .table th {
+    .table td,
+    .table th {
         vertical-align: middle !important;
-
     }
-    
+
     .form-check-input {
-        margin-top: 0.3rem !important  ;
+        margin-top: 0.3rem !important;
         margin-left: 0.75rem !important;
     }
-    
+
+    /* Estilo para a lista de checkboxes dos grupos ficarem arrumados */
+    #id_grupos {
+        list-style-type: none;
+        /* Remove as bolinhas da lista */
+        padding-left: 0;
+        max-height: 150px;
+        overflow-y: auto;
+        /* Adiciona rolagem se tiver muitos grupos */
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        padding: 10px;
+    }
+
+    #id_grupos li {
+        margin-bottom: 5px;
+    }
+
+    #id_grupos label {
+        font-weight: normal !important;
+        margin-left: 5px;
+        cursor: pointer;
+    }
+
+    #id_grupos input[type="checkbox"] {
+        margin-right: 5px;
+        transform: scale(1.2);
+        /* Aumenta um pouco a caixinha */
+    }
 </style>
 
 <div class="wrapper">
     {% include 'includes/sidebar.html' %}
-    {% include 'includes/navbar.html' %} 
+    {% include 'includes/navbar.html' %}
 
     <div class="content-wrapper">
         <section class="content-header py-3 shadow-sm">
@@ -45,8 +71,8 @@
                         </h1>
                     </div>
                     <div class="col-md-4 text-md-right">
-
-                        <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#adicionarModal" onclick="limparFormulario()">
+                        <button type="button" class="btn btn-sm btn-success" data-toggle="modal"
+                            data-target="#adicionarModal" onclick="limparFormulario()">
                             <i class="fas fa-plus mr-2"></i> Adicionar Usuário
                         </button>
                     </div>
@@ -59,7 +85,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Lista de Usuarios</h3> 
+                                <h3 class="card-title">Lista de Usuários</h3>
                             </div>
                             <div class="card-body">
                                 <table id="example1" class="table table-striped table-bordered">
@@ -67,7 +93,7 @@
                                         <tr class="bg-success">
                                             <th class="text-center">N°</th>
                                             <th class="text-center">Imagem</th>
-                                            <th class="text-center">Usuario</th>
+                                            <th class="text-center">Usuário</th>
                                             <th class="text-center">E-mail</th>
                                             <th class="text-center">Nome Completo</th>
                                             <th class="text-center">Status</th>
@@ -77,73 +103,84 @@
                                     </thead>
                                     <tbody>
                                         {% for usuario in usuarios %}
-                                            <tr>
-                                                <td class="text-center">{{ forloop.counter }}</td>
-                                                <td class="text-center">
-                                                    {% if usuario.perfil.foto_perfil %}
-                                                        <img src="{{ usuario.perfil.foto_perfil.url }}" alt="Foto de perfil" width="50" height="50">
-                                                    {% else %}
-                                                        <img src="{% static 'image/no_image.png' %}" alt="Imagem padrão" width="50" height="50">
-                                                    {% endif %}
-                                                </td>
-                                                <td class="text-center">{{ usuario.username }}</td>
-                                                <td class="text-center">{{ usuario.email }}</td>
-                                                <td class="text-center">{{ usuario.get_full_name }}</td>
-                                                <td class="text-center">
-                                                    {% if usuario.is_active %}
-                                                        <span class="badge badge-success">Ativo</span>
-                                                    {% else %}
-                                                        <span class="badge badge-danger">Inativo</span>
-                                                    {% endif %}
-                                                </td>
-                                                <td class="text-center">
-                                                    {% for group in usuario.groups.all %}
-                                                        <span class="badge badge-info">{{ group.name }}</span>
-                                                    {% endfor %}
-                                                </td>
-                                                <td class="text-center">
-                                                   <!-- Exemplo de botão de edição na tabela de usuários -->
-                                                    <button class="btn btn-success btn-sm" onclick="abrirModalEditar({{ usuario.id }}, '{{ usuario.username }}', '{{ usuario.email }}', '{{ usuario.first_name }}', '{{ usuario.last_name }}', {{ usuario.is_active|yesno:'true,false' }}, [/* grupos */])">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
+                                        <tr>
+                                            <td class="text-center">{{ forloop.counter }}</td>
+                                            <td class="text-center">
+                                                {% if usuario.perfil.foto_perfil %}
+                                                <img src="{{ usuario.perfil.foto_perfil.url }}" alt="Foto de perfil"
+                                                    width="50" height="50" class="img-circle elevation-2">
+                                                {% else %}
+                                                <img src="{% static 'image/no_image.png' %}" alt="Imagem padrão"
+                                                    width="50" height="50" class="img-circle elevation-2">
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-center">{{ usuario.username }}</td>
+                                            <td class="text-center">{{ usuario.email }}</td>
+                                            <td class="text-center">{{ usuario.get_full_name }}</td>
+                                            <td class="text-center">
+                                                {% if usuario.is_active %}
+                                                <span class="badge badge-success">Ativo</span>
+                                                {% else %}
+                                                <span class="badge badge-danger">Inativo</span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-center">
+                                                {% for group in usuario.groups.all %}
+                                                <span class="badge badge-info">{{ group.name }}</span>
+                                                {% empty %}
+                                                <span class="text-muted small">Sem grupo</span>
+                                                {% endfor %}
+                                            </td>
+                                            <td class="text-center">
+                                                <button class="btn btn-success btn-sm" onclick="abrirModalEditar(
+                                                        '{{ usuario.id }}', 
+                                                        '{{ usuario.username }}', 
+                                                        '{{ usuario.email }}', 
+                                                        '{{ usuario.first_name }}', 
+                                                        '{{ usuario.last_name }}', 
+                                                        '{{ usuario.is_active|yesno:'true,false' }}', 
+                                                        [{% for g in usuario.groups.all %}{{ g.id }}{% if not forloop.last %},{% endif %}{% endfor %}]
+                                                    )">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
 
-                                                    
-
-                                                    <a href="{% url 'excluir_usuario' usuario.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir este usuário?');">
-                                                        <i class="fas fa-trash"></i>
-                                                    </a>
-                                                </td>
-                                                
-                                            </tr>
+                                                <a href="{% url 'excluir_usuario' usuario.id %}"
+                                                    class="btn btn-sm btn-danger"
+                                                    onclick="return confirm('Tem certeza que deseja excluir este usuário?');">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
                                         {% endfor %}
                                     </tbody>
-                                </table>    
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-    </div>           
+    </div>
 </div>
-<!-- Modal para Adicionar Usuário -->
-<div class="modal fade" id="adicionarModal" tabindex="-1" role="dialog" aria-labelledby="adicionarModalLabel" aria-hidden="true">
+
+<div class="modal fade" id="adicionarModal" tabindex="-1" role="dialog" aria-labelledby="adicionarModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header bg-success">
                 <h5 class="modal-title text-light" id="adicionarModalLabel">
-                    <i class="fas fa-plus-circle"></i> Adicionar Usuário</h5>
+                    <i class="fas fa-user-plus"></i> Gerenciar Usuário
+                </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <!-- Formulário de Usuário -->
                 <form id="formularioAdicionarUsuario" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <input type="hidden" id="id_usuario_id" name="usuario_id"> 
+                    <input type="hidden" id="id_usuario_id" name="usuario_id">
+
                     <div class="row">
-                        <!-- Primeira Coluna -->
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="id_username"><i class="fas fa-user"></i> Usuário</label>
@@ -164,108 +201,119 @@
                             <div class="form-group">
                                 <label for="id_nova_senha"><i class="fas fa-lock"></i> Nova Senha</label>
                                 {{ form.nova_senha }}
+                                <small class="text-muted">Deixe em branco para manter a atual.</small>
                             </div>
                             <div class="form-group">
                                 <label for="id_confirmar_senha"><i class="fas fa-lock"></i> Confirmar Senha</label>
                                 {{ form.confirmar_senha }}
                             </div>
                         </div>
-                        <!-- Segunda Coluna -->
+
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="id_grupos"><i class="fas fa-users"></i> Grupos</label>
-                                {{ form.grupos }}
+                                <label><i class="fas fa-users"></i> Permissões / Cargos</label>
+                                <div class="bg-light p-2 border rounded">
+                                    {{ form.grupos }}
+                                </div>
+                                <small class="text-muted">Marque "Administrador" para acesso total ou "Atendente" para
+                                    acesso restrito.</small>
                             </div>
+
                             <div class="form-group">
                                 <label for="id_foto_perfil"><i class="fas fa-camera"></i> Foto de Perfil</label>
                                 {{ form.foto_perfil }}
                             </div>
-                            <div class="form-check">
-                                <label for="id_is_active"><i class="fas fa-check-circle"></i> Ativo</label>
+
+                            <div class="form-check mt-4">
                                 {{ form.is_active }}
+                                <label class="form-check-label" for="id_is_active">
+                                    <i class="fas fa-check-circle text-success"></i> Usuário Ativo
+                                </label>
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-success btn-sm w-100"><i class="fas fa-save"></i> Salvar</button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Salvar</button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Modal para Excluir produto (apenas um, fora do loop) -->
-<div class="modal fade" id="excluirModal" tabindex="-1" role="dialog" aria-labelledby="excluirModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-danger">
-                <h5 class="modal-title text-light" id="excluirModalLabel">Excluir produto</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>Você tem certeza que deseja excluir esta produto: <strong id="produtoNome"></strong>?</p>
-                <form method="post" id="excluirForm" action="">
-                    {% csrf_token %}
-                    <input type="hidden" name="produto_id" id="excluir_produto_id">
-                    <button type="submit" class="btn btn-danger w-100">Excluir</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
 
 {% block extra_scripts %}
-<!--Modal de edição-->
 <script>
     // Função para abrir a modal de edição e preencher com os dados do usuário
-    function abrirModalEditar(usuarioId, username, email, firstName, lastName, isActive, grupos) {
-        // Preenche os campos da modal com os dados do usuário
+    function abrirModalEditar(usuarioId, username, email, firstName, lastName, isActive, gruposIds) {
+        limparFormulario(); // Limpa antes de preencher
+
+        // Define o título da modal para "Editar"
+        document.getElementById('adicionarModalLabel').innerHTML = '<i class="fas fa-edit"></i> Editar Usuário';
+
+        // Preenche os campos de texto
         document.getElementById('id_usuario_id').value = usuarioId;
         document.getElementById('id_username').value = username;
         document.getElementById('id_email').value = email;
         document.getElementById('id_first_name').value = firstName;
         document.getElementById('id_last_name').value = lastName;
-        document.getElementById('id_is_active').checked = isActive;
 
+        // Preenche o checkbox de "Ativo"
+        // Nota: O Django converte booleano para "True"/"False" ou "true"/"false" string no template filter
+        var isChecked = (isActive === 'true' || isActive === true);
+        document.getElementById('id_is_active').checked = isChecked;
 
+        // Manipula os checkboxes dos GRUPOS
+        // O widget CheckboxSelectMultiple gera inputs com name="grupos" e value="ID_DO_GRUPO"
+        // Vamos desmarcar todos primeiro (já feito no limparFormulario) e marcar só os que o usuário tem.
 
-        // Manipule os grupos, se necessário, usando JavaScript
-        // Exemplo simples de como marcar os grupos do usuário
-        const gruposSelect = document.getElementById('id_grupos');
-        for (let option of gruposSelect.options) {
-            option.selected = grupos.includes(parseInt(option.value));
+        if (gruposIds && gruposIds.length > 0) {
+            // Seleciona todos os checkboxes de grupos
+            var checkboxes = document.querySelectorAll('input[name="grupos"]');
+
+            checkboxes.forEach(function (checkbox) {
+                // Se o valor do checkbox (ID do grupo) estiver na lista do usuário, marca ele
+                if (gruposIds.includes(parseInt(checkbox.value))) {
+                    checkbox.checked = true;
+                }
+            });
         }
 
-        // Abre a modal de edição
+        // Abre a modal
         $('#adicionarModal').modal('show');
     }
 
     function limparFormulario() {
-        // Reseta o formulário dentro da modal
+        // Reseta o formulário
         document.getElementById('formularioAdicionarUsuario').reset();
-    }
-    
 
+        // Limpa o ID oculto para garantir que se salvar, será um novo usuário
+        document.getElementById('id_usuario_id').value = '';
+
+        // Reseta o título da modal
+        document.getElementById('adicionarModalLabel').innerHTML = '<i class="fas fa-user-plus"></i> Adicionar Usuário';
+
+        // Garante que todos os checkboxes de grupos sejam desmarcados
+        var checkboxes = document.querySelectorAll('input[name="grupos"]');
+        checkboxes.forEach(function (box) { box.checked = false; });
+
+        // Deixa o "Ativo" marcado por padrão ao criar novo
+        document.getElementById('id_is_active').checked = true;
+    }
 </script>
 
-<!-- Modal que exclui -->
 <script>
     $(document).ready(function () {
-        // Quando o botão de excluir for clicado
-        $('button[data-target="#excluirModal"]').on('click', function () {
-            var produtoId = $(this).data('id');
-            var produtoNome = $(this).data('nome');
-
-            // Atualiza o nome no modal de exclusão
-            $('#produtoNome').text(produtoNome);
-
-            // Define a URL de exclusão com o ID da produto no `action`
-            var excluirUrl = "{% url 'excluir_produto' 0 %}".replace('0', produtoId);
-            $('#excluirForm').attr('action', excluirUrl);
-        });       
-
+        // Inicialização de DataTables ou outros plugins se necessário
+        if ($.fn.DataTable) {
+            $("#example1").DataTable({
+                "responsive": true,
+                "autoWidth": false,
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/Portuguese-Brasil.json"
+                }
+            });
+        }
     });
 </script>
 {% endblock %}
