@@ -7,8 +7,10 @@ import dj_database_url # Importante para o banco na nuvem
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # --- CONFIGURAÇÃO DE AMBIENTE (LOCAL VS NUVEM) ---
-# Verifica se estamos rodando no Render através da variável de ambiente
+# Verifica se estamos rodando no Render ou no Railway através das variáveis de ambiente
 ON_RENDER = 'RENDER' in os.environ
+ON_RAILWAY = 'RAILWAY_ENVIRONMENT' in os.environ
+IN_PRODUCTION = ON_RENDER or ON_RAILWAY
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # Na nuvem, tenta pegar da variável de ambiente, senão usa a chave padrão (apenas para build)
@@ -18,16 +20,29 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-xu4^66$qjsm86acg5()+&
 LICENSE_SECRET_KEY = 'TEST-e913c0fd-99a3-423d-ad0b-89629b170b28'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# Se estiver no Render, Debug é False (Segurança). Se não, é True (Desenvolvimento)
-DEBUG = not ON_RENDER
+# Se estiver na nuvem (Railway/Render), Debug é False (Segurança). Se não, é True (Desenvolvimento)
+DEBUG = not IN_PRODUCTION
 
 # Configuração de Hosts Permitidos
 ALLOWED_HOSTS = ['*'] 
-if ON_RENDER:
-    # No Render, pegamos o nome do host automaticamente
-    RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
-    if RENDER_EXTERNAL_HOSTNAME:
-        ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+# Configuração Dinâmica de Domínios e CSRF (Essencial para não dar erro 403 no Login)
+CSRF_TRUSTED_ORIGINS = []
+
+if IN_PRODUCTION:
+    # Configuração específica para o Render
+    if ON_RENDER:
+        render_hostname = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+        if render_hostname:
+            ALLOWED_HOSTS.append(render_hostname)
+            CSRF_TRUSTED_ORIGINS.append(f'https://{render_hostname}')
+            
+    # Configuração específica para o Railway
+    if ON_RAILWAY:
+        railway_domain = os.environ.get('RAILWAY_PUBLIC_DOMAIN')
+        if railway_domain:
+            ALLOWED_HOSTS.append(railway_domain)
+            CSRF_TRUSTED_ORIGINS.append(f'https://{railway_domain}')
 
 # Application definition
 INSTALLED_APPS = [
@@ -100,13 +115,15 @@ DATABASES = {
     }
 }
 
-# Se estiver no Render, sobrescreve com o PostgreSQL
-if ON_RENDER:
-    DATABASES['default'] = dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'),
-        conn_max_age=600, # Mantém a conexão aberta por 10min para performance (fluidez)
-        ssl_require=True  # Segurança exigida pelo Render
-    )
+# Se estiver na nuvem (Railway ou Render), sobrescreve com o PostgreSQL
+if IN_PRODUCTION:
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url:
+        DATABASES['default'] = dj_database_url.config(
+            default=database_url,
+            conn_max_age=600, # Mantém a conexão aberta por 10min para performance (fluidez)
+            ssl_require=True  # Segurança exigida
+        )
 
 CACHES = {
     "default": {
@@ -176,4 +193,4 @@ MESSAGE_TAGS = {
     message_constants.SUCCESS: 'success',
     message_constants.WARNING: 'warning',
     message_constants.ERROR: 'error',
-}   
+}
