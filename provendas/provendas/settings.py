@@ -7,7 +7,7 @@ import dj_database_url # Importante para o banco na nuvem
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # --- CONFIGURAÇÃO DE AMBIENTE (LOCAL VS NUVEM) ---
-# Verifica se estamos rodando no Render ou no Railway através das variáveis de ambiente
+# Verifica se estamos rodando no Render ou no Railway
 ON_RENDER = 'RENDER' in os.environ
 ON_RAILWAY = 'RAILWAY_ENVIRONMENT' in os.environ
 IN_PRODUCTION = ON_RENDER or ON_RAILWAY
@@ -20,13 +20,13 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-xu4^66$qjsm86acg5()+&
 LICENSE_SECRET_KEY = 'TEST-e913c0fd-99a3-423d-ad0b-89629b170b28'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# Se estiver na nuvem (Railway/Render), Debug é False (Segurança). Se não, é True (Desenvolvimento)
+# Se estiver em produção (Railway/Render), Debug é False (Segurança). Se não, é True (Desenvolvimento)
 DEBUG = not IN_PRODUCTION
 
 # Configuração de Hosts Permitidos
 ALLOWED_HOSTS = ['*'] 
 
-# Configuração Dinâmica de Domínios e CSRF (Essencial para não dar erro 403 no Login)
+# Configuração de CSRF (Essencial para o Railway)
 CSRF_TRUSTED_ORIGINS = []
 
 if IN_PRODUCTION:
@@ -36,7 +36,7 @@ if IN_PRODUCTION:
         if render_hostname:
             ALLOWED_HOSTS.append(render_hostname)
             CSRF_TRUSTED_ORIGINS.append(f'https://{render_hostname}')
-            
+    
     # Configuração específica para o Railway
     if ON_RAILWAY:
         railway_domain = os.environ.get('RAILWAY_PUBLIC_DOMAIN')
@@ -115,13 +115,13 @@ DATABASES = {
     }
 }
 
-# Se estiver na nuvem (Railway ou Render), sobrescreve com o PostgreSQL
+# Se estiver em Produção (Railway ou Render), sobrescreve com o PostgreSQL
 if IN_PRODUCTION:
     database_url = os.environ.get('DATABASE_URL')
     if database_url:
         DATABASES['default'] = dj_database_url.config(
             default=database_url,
-            conn_max_age=600, # Mantém a conexão aberta por 10min para performance (fluidez)
+            conn_max_age=600, # Mantém a conexão aberta por 10min para performance
             ssl_require=True  # Segurança exigida
         )
 
