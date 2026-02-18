@@ -3,18 +3,18 @@ certifi==2024.8.30
 cffi==1.17.1
 charset-normalizer==3.4.0
 cryptography==43.0.3
+dj-database-url==2.3.0
 Django==5.1.2
 django-jazzmin==3.0.1
 gunicorn==23.0.0
 idna==3.10
 packaging==24.2
 pillow==11.0.0
+psycopg2-binary==2.9.10
 pycparser==2.22
 requests==2.32.3
 sqlparse==0.5.1
+typing_extensions==4.15.0
 tzdata==2024.2
 urllib3==2.2.3
-# Adições para Nuvem (Render)
-dj-database-url==2.3.0
-psycopg2-binary==2.9.10
 whitenoise==6.8.2
