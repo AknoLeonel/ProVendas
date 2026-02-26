@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.auth.models import User
+from decimal import Decimal
 import json
 import logging
 import random
@@ -19,8 +20,6 @@ from empresas.models import Empresa
 from configuracoes.models import Configuracao
 from estoque.models import Produto, CategoriaProduto
 from django.views.decorators.cache import cache_page
-
-
 
 logger = logging.getLogger(__name__)
 
@@ -49,96 +48,6 @@ def gerar_cupom_fiscal_comanda(request, comanda_id):
     # Renderiza o template de cupom fiscal
     return render(request, 'comanda/cupom_fiscal.html', context)
 
-# def fechar_comanda(request, mesa_id):
-#     if request.method == 'POST':
-#         try:
-#             # Capturar os dados da requisição
-#             data = json.loads(request.body)
-#             numero_pedido = data.get('numero_pedido')
-#             vendedor_id = data.get('vendedor_id')
-#             cliente_id = data.get('cliente_id')
-#             desconto = data.get('desconto', 0.0)
-#             total = data.get('total')
-#             payment_method = data.get('payment_method')
-#             produtos = data.get('produtos', [])
-
-#             # Buscar a mesa e a comanda aberta associada
-#             mesa = get_object_or_404(Mesa, id=mesa_id)
-#             comanda = get_object_or_404(Comanda, mesa=mesa, status='aberta')
-
-#             # Verificar se há um caixa aberto, considerando o gerenciamento de caixa
-#             configuracao = Configuracao.objects.first()
-#             gerenciar_caixa = configuracao.gerenciar_abertura_fechamento_caixa if configuracao else False
-
-#             # Pega o caixa aberto para associar a venda, se o gerenciamento estiver ativado
-#             caixa = None
-#             if gerenciar_caixa:
-#                 caixa = Caixa.objects.filter(status='Aberto').first()
-#                 if not caixa:
-#                     return JsonResponse({'success': False, 'message': 'Não há caixa aberto para registrar a venda.'}, status=400)
-
-#             # Verifica se o cliente e o vendedor existem
-#             cliente = Cliente.objects.filter(id=cliente_id).first()
-#             vendedor = User.objects.filter(id=vendedor_id).first()
-
-#             if not cliente or not vendedor:
-#                 return JsonResponse({'success': False, 'message': 'Cliente ou Vendedor não encontrado.'}, status=404)
-
-#             # Criando a venda (CaixaPdv) e associando ao caixa se ele estiver aberto
-#             caixa_pdv = CaixaPdv.objects.create(
-#                 caixa=caixa,  # Associa ao caixa aberto, se existir
-#                 numero_pedido=numero_pedido,
-#                 vendedor=vendedor,
-#                 cliente=cliente,
-#                 desconto=desconto,
-#                 total=total,
-#                 status="Finalizado",  # Marcar como finalizado direto ao fechar a comanda
-#                 payment_method=payment_method
-#             )
-
-#             # Processar os produtos e salvar no CaixaPdv
-#             for produto_data in produtos:
-#                 produto = Produto.objects.filter(id=produto_data.get('produto_id')).first()
-
-#                 if produto:
-#                     quantidade = produto_data['quantidade']
-
-#                     # Verificar se o controle de estoque está ativado
-#                     if produto.controle_estoque:
-#                         if produto.quantidade_estoque >= quantidade:
-#                             # Descontar do estoque se houver quantidade suficiente
-#                             produto.quantidade_estoque -= quantidade
-#                             produto.save()
-#                         else:
-#                             # Se não houver quantidade suficiente, retornar erro
-#                             return JsonResponse({'success': False, 'message': 'Estoque insuficiente para um dos produtos.'}, status=400)
-
-#                     # Salvar os produtos na venda
-#                     ProdutoCaixaPdv.objects.create(
-#                         caixa_pdv=caixa_pdv,
-#                         produto=produto,
-#                         quantidade=quantidade,
-#                         preco_unitario=produto.preco_de_venda,
-#                         total=quantidade * produto.preco_de_venda
-#                     )
-
-#             # Liberar a mesa
-#             mesa.status = 'livre'
-#             mesa.save()
-
-#             # Marcar a comanda como fechada
-#             comanda.status = 'fechada'
-#             comanda.save()
-
-#             # Retornar uma resposta de sucesso
-#             return JsonResponse({'success': True, 'message': 'Comanda convertida para venda direta e finalizada com sucesso!'})
-
-#         except Exception as e:
-#             # Se ocorrer algum erro, retornar uma mensagem de erro
-#             return JsonResponse({'success': False, 'message': str(e)})
-
-#     # Se não for uma requisição POST, redirecionar para a lista de mesas
-#     return redirect('listar_mesas')
 def fechar_comanda(request, mesa_id):
     if request.method == 'POST':
         try:
@@ -199,7 +108,6 @@ def fechar_comanda(request, mesa_id):
                         produto.quantidade_estoque -= quantidade  # Ajuste do estoque, permitindo números negativos
                         produto.save()
                     # Caso o produto não seja gerenciável, não altera o estoque e apenas realiza a venda
-                    # Nenhuma ação é necessária aqui, o estoque não será alterado.
 
                     # Salvar os produtos na venda
                     ProdutoCaixaPdv.objects.create(
@@ -221,7 +129,6 @@ def fechar_comanda(request, mesa_id):
             # Retornar uma resposta de sucesso
             return JsonResponse({'success': True, 'message': 'Comanda convertida para venda direta e finalizada com sucesso!'})
 
-
         except Exception as e:
             # Se ocorrer algum erro, retornar uma mensagem de erro
             return JsonResponse({'success': False, 'message': str(e)})
@@ -230,13 +137,11 @@ def fechar_comanda(request, mesa_id):
     return redirect('listar_mesas')
 
 # Pagina de hístórico de vendas
-
 def historico_vendas(request):
     vendas = Comanda.objects.filter(status='fechada').order_by('-created_at')  # Filtra apenas as comandas fechadas
     return render(request, 'comanda/lista_vendas_comanda.html', {'vendas': vendas})
 
 #  Veja os detalhes da comanda
-
 def detalhes_comanda(request, comanda_id):
     try:
         # Buscar a comanda com seus produtos
@@ -255,7 +160,7 @@ def detalhes_comanda(request, comanda_id):
         dados_comanda = {
             'numero_pedido': comanda.numero_pedido,
             'vendedor': comanda.vendedor.username,
-            'cliente': comanda.cliente.nome,
+            'cliente': comanda.cliente.nome if comanda.cliente else "Não especificado",
             'total': comanda.total,
             'desconto': comanda.desconto,
             'payment_method': comanda.payment_method,
@@ -267,7 +172,7 @@ def detalhes_comanda(request, comanda_id):
     except Comanda.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'Comanda não encontrada.'})
 
-#  Exluir a comanda criada
+#  Excluir a comanda criada
 def excluir_comanda(request, comanda_id):
     try:
         # Recupera a comanda
@@ -360,7 +265,6 @@ def adicionar_produto_comanda(request, mesa_id):
     # Se não for uma requisição POST, redirecionar para a lista de mesas
     return redirect('listar_mesas')
 
-
 def get_comanda_details(request, mesa_id):
     # Buscar a mesa com o ID fornecido
     mesa = get_object_or_404(Mesa, id=mesa_id)
@@ -402,7 +306,6 @@ def get_comanda_details(request, mesa_id):
 
     return JsonResponse(data)
 
-
 def listar_mesas(request):
     mesas = Mesa.objects.all()  # Obter todas as mesas
     
@@ -440,8 +343,6 @@ def listar_mesas(request):
     form = MesaForm()  # Formulário vazio para cadastro
     return render(request, 'comanda/listar_mesas.html', {'mesas_comandas': mesas_comandas, 'form': form})
 
-
-
 def cadastrar_mesa(request):
     if request.method == 'POST':
         form = MesaForm(request.POST)
@@ -462,7 +363,6 @@ def excluir_mesa(request, mesa_id):
     # Exibe uma mensagem de sucesso após a exclusão
     messages.success(request, f"A mesa {mesa.nome} foi excluída com sucesso.")
     return redirect('listar_mesas')  # Redireciona para a página de listagem das mesas
-
 
 # Abra uma comanda ou continue editando depois
 def abrir_ou_gerenciar_comanda(request, mesa_id):
@@ -524,3 +424,78 @@ def gerar_numero_pedido():
     numero_pedido = f"PDVM-{timestamp}{numero_aleatorio}"
 
     return numero_pedido
+
+# AQUI ESTÁ A NOVA FUNÇÃO CORRIGIDA (comanda/views.py)
+def salvar_comanda_rapida(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            vendedor_id = data.get('vendedor_id')
+            cliente_id = data.get('cliente_id')
+            nome_comanda = data.get('nome_comanda', '').strip()
+            
+            if not nome_comanda:
+                nome_comanda = 'Comanda Rápida (Balcão)'
+                
+            # CORREÇÃO AQUI: Transformando o desconto em Decimal de forma segura
+            desconto = Decimal(str(data.get('desconto', '0')))
+            produtos = data.get('produtos', [])
+
+            vendedor = User.objects.filter(id=vendedor_id).first()
+            cliente = Cliente.objects.filter(id=cliente_id).first() if cliente_id else None
+
+            if not vendedor:
+                return JsonResponse({'success': False, 'message': 'Vendedor não encontrado.'}, status=404)
+            
+            if not produtos:
+                return JsonResponse({'success': False, 'message': 'Adicione pelo menos um produto.'}, status=400)
+
+            # 1. Cria uma Mesa virtual para a comanda
+            mesa_virtual = Mesa.objects.create(
+                nome=nome_comanda,
+                status='ocupada'
+            )
+
+            # 2. Cria a Comanda
+            numero_pedido = gerar_numero_pedido()
+            comanda = Comanda.objects.create(
+                numero_pedido=numero_pedido,
+                vendedor=vendedor,
+                mesa=mesa_virtual,
+                desconto=desconto,
+                status='aberta',
+                cliente=cliente,
+                total=Decimal('0.00')  # Mantendo como Decimal
+            )
+
+            # 3. Adiciona os produtos
+            total_comanda = Decimal('0.00')
+            for item in produtos:
+                produto_id = item.get('produto_id')
+                quantidade = int(item.get('quantidade', 1))
+                produto = Produto.objects.filter(id=produto_id).first()
+                
+                if produto:
+                    preco_unitario = produto.preco_de_venda # Isso já é Decimal no banco
+                    total_item = Decimal(str(quantidade)) * preco_unitario
+                    total_comanda += total_item
+                    
+                    ProdutoComanda.objects.create(
+                        comanda=comanda,
+                        produto=produto,
+                        quantidade=quantidade,
+                        preco_unitario=preco_unitario,
+                        total=total_item
+                    )
+            
+            # 4. Atualiza o total geral (agora ambos são Decimal, não vai dar erro!)
+            comanda.total = total_comanda - desconto
+            comanda.save()
+
+            return JsonResponse({'success': True, 'message': 'Comanda criada com sucesso!'})
+
+        except Exception as e:
+            logger.error(f"Erro ao salvar comanda rápida: {str(e)}")
+            return JsonResponse({'success': False, 'message': f'Erro: {str(e)}'}, status=500)
+    
+    return JsonResponse({'success': False, 'message': 'Método inválido.'}, status=405)

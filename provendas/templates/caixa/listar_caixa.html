@@ -1,5 +1,4 @@
-{% extends "template.html" %} {% load static %} {% block title %} Hístorico de
-vendas {% endblock %} {% block content %}
+{% extends "template.html" %} {% load static %} {% block title %} Hístorico de vendas {% endblock %} {% block content %}
 
 <style>
   .imagemProdutos {
@@ -49,7 +48,6 @@ vendas {% endblock %} {% block content %}
             </h1>
           </div>
           <div class="col-md-7 text-md-right">
-            <!-- Link para nova venda -->
             <a
               href="{% url 'abrir_caixa_pdv' %}"
               class="btn btn-sm btn-success mr-2"
@@ -58,34 +56,20 @@ vendas {% endblock %} {% block content %}
             </a>
 
             {% if abrir_caixa_automatico %}
-            <!-- Botão Fechar Caixa -->
             <button
               class="btn btn-danger btn-sm mr-2"
               data-toggle="modal"
               data-target="#fecharCaixaModal"
-              {%
-              if
-              not
-              caixa_esta_aberto
-              %}disabled{%
-              endif
-              %}
+              {% if not caixa_esta_aberto %}disabled{% endif %}
             >
               <i class="fas fa-box-open mr-2"></i> Fechar Caixa
             </button>
 
-            <!-- Botão operações do caixa -->
             <button
               class="btn btn-warning btn-sm"
               data-toggle="modal"
               data-target="#retiradaCaixaModal"
-              {%
-              if
-              not
-              caixa_esta_aberto
-              %}disabled{%
-              endif
-              %}
+              {% if not caixa_esta_aberto %}disabled{% endif %}
             >
               <i class="fas fa-wallet mr-2"></i> Operações do Caixa
             </button>
@@ -94,15 +78,12 @@ vendas {% endblock %} {% block content %}
         </div>
       </div>
     </section>
-    <!-- Content Header (Page header) -->
     <section class="content py-3">
       <div class="container-fluid">
         <div class="row">
           <div class="col-12">
-            <!-- Card de Pedidos -->
             <div class="card">
               <div class="card-body">
-                <!-- Abas -->
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                   <li class="nav-item mb-4" role="presentation">
                     <a
@@ -133,7 +114,6 @@ vendas {% endblock %} {% block content %}
                   {% else %} {% endif %}
                 </ul>
                 <div class="tab-content" id="myTabContent ">
-                  <!-- Aba de Registro de Vendas -->
                   <div
                     class="tab-pane fade show active"
                     id="vendas"
@@ -185,19 +165,16 @@ vendas {% endblock %} {% block content %}
                           </tr>
                         </thead>
                         <tbody>
-                          <!-- As linhas de pedidos serão adicionadas aqui dinamicamente -->
-                        </tbody>
+                          </tbody>
                       </table>
                     </div>
                     <div
                       id="pagination-controls"
                       class="pagination text-center"
                     >
-                      <!-- Links de paginação serão injetados aqui -->
-                    </div>
+                      </div>
                   </div>
 
-                  <!-- Aba de Pedidos -->
                   <div
                     class="tab-pane fade"
                     id="pedidos"
@@ -219,8 +196,7 @@ vendas {% endblock %} {% block content %}
                         </tr>
                       </thead>
                       <tbody>
-                        <!-- Os dados dos caixas abertos serão inseridos aqui pelo AJAX -->
-                      </tbody>
+                        </tbody>
                     </table>
                   </div>
                 </div>
@@ -233,7 +209,6 @@ vendas {% endblock %} {% block content %}
   </div>
 </div>
 
-<!-- Modal de Confirmação -->
 <div
   class="modal fade"
   id="confirmDeleteModal"
@@ -269,7 +244,6 @@ vendas {% endblock %} {% block content %}
   </div>
 </div>
 
-<!-- Modal de Resultado -->
 <div
   class="modal fade"
   id="resultModal"
@@ -293,7 +267,6 @@ vendas {% endblock %} {% block content %}
   </div>
 </div>
 
-<!-- Modal de Sucesso -->
 <div
   class="modal fade"
   id="resultModal"
@@ -305,7 +278,6 @@ vendas {% endblock %} {% block content %}
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header justify-content-center">
-        <!-- Ícone de confirmação com animação -->
         <div id="checkmark-animation" class="checkmark">
           <div class="checkmark-circle"></div>
           <div class="checkmark-stem"></div>
@@ -314,14 +286,12 @@ vendas {% endblock %} {% block content %}
       </div>
       <div class="modal-body text-center">
         <div class="modal-body text-center" id="modalMessageBody">
-          <!-- A mensagem será inserida aqui -->
-        </div>
+          </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Modal -->
 <div
   class="modal fade"
   id="modalCupomFiscal"
@@ -346,8 +316,7 @@ vendas {% endblock %} {% block content %}
         </button>
       </div>
       <div class="modal-body" id="modal-body-cupom">
-        <!-- Detalhes serão preenchidos aqui via AJAX -->
-      </div>
+        </div>
       <div class="modal-footer">
         <button
           type="button"
@@ -368,7 +337,6 @@ vendas {% endblock %} {% block content %}
   </div>
 </div>
 
-<!-- Modal para Fechar Caixa -->
 <div class="modal fade" id="fecharCaixaModal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -408,7 +376,6 @@ vendas {% endblock %} {% block content %}
   </div>
 </div>
 
-<!-- Modal para Retirada ou Adição -->
 <div class="modal fade" id="retiradaCaixaModal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -499,7 +466,6 @@ vendas {% endblock %} {% block content %}
 
 {% block extra_scripts %}
 
-<!--Sistema de listagem de vendas-->
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     $(document).ready(function () {
@@ -567,15 +533,15 @@ vendas {% endblock %} {% block content %}
                                         : "badge-success"
                                     }">${pedido.status}</span></td>
                                     <td>
-                                        <a href="{% url 'abrir_caixa_pdv' %}?id=${
-                                          pedido.id
-                                        }" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></a>
-                                        <a href="javascript:void(0);" class="btn btn-sm btn-primary" onclick="abrirModalCupomFiscal(${
-                                          pedido.id
-                                        })"><i class="fas fa-eye"></i></a>
-                                        <button type="button" class="btn btn-sm btn-danger" onclick="excluirVenda(${
-                                          pedido.id
-                                        })"><i class="fas fa-trash"></i></button>
+                                        {% if request.user.is_superuser %}
+                                        <a href="{% url 'abrir_caixa_pdv' %}?id=${pedido.id}" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></a>
+                                        {% endif %}
+                                        
+                                        <a href="javascript:void(0);" class="btn btn-sm btn-primary" onclick="abrirModalCupomFiscal(${pedido.id})"><i class="fas fa-eye"></i></a>
+                                        
+                                        {% if request.user.is_superuser %}
+                                        <button type="button" class="btn btn-sm btn-danger" onclick="excluirVenda(${pedido.id})"><i class="fas fa-trash"></i></button>
+                                        {% endif %}
                                     </td>
                                 </tr>`;
               tbody.append(row);
@@ -821,7 +787,6 @@ vendas {% endblock %} {% block content %}
   }
 </script>
 
-<!-- Listagem de caixas-->
 <script>
   $(document).ready(function () {
       // Verificar se o script já foi executado antes
@@ -850,8 +815,7 @@ vendas {% endblock %} {% block content %}
                           <tr>
                               <td class="text-center">${caixa.id}</td>
                               <td>${caixa.usuario__username}</td>
-                              <td class="text-center">R$ ${saldo}</td>  <!-- Exibe o saldo formatado -->
-                              <td class="text-center">
+                              <td class="text-center">R$ ${saldo}</td>  <td class="text-center">
                                   <span class="badge ${statusClass}">
                                       <i class="${statusIcon}"></i> ${caixa.status}
                                   </span>

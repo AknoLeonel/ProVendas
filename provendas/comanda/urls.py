@@ -1,10 +1,8 @@
-# comanda/urls.py
 from django.urls import path
 from . import views
-from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
-    path('', (views.listar_mesas), name='listar_mesas'),
+    path('', views.listar_mesas, name='listar_mesas'),
     path('cadastrar/', views.cadastrar_mesa, name='cadastrar_mesa'),
     path('excluir/<int:mesa_id>/', views.excluir_mesa, name='excluir_mesa'),
     path('abrir-ou-gerenciar-comanda/<int:mesa_id>/', views.abrir_ou_gerenciar_comanda, name='abrir_ou_gerenciar_comanda'),
@@ -15,6 +13,7 @@ urlpatterns = [
     path('detalhes_comanda/<int:comanda_id>/', views.detalhes_comanda, name='detalhes_comanda'),
     path('excluir/comanda/<int:comanda_id>/', views.excluir_comanda, name='excluir_comanda'),
     path('gerar-cupom-fiscal/<int:comanda_id>/', views.gerar_cupom_fiscal_comanda, name='gerar_cupom_fiscal_comanda'),
-
-
+    
+    # Rota para salvar a venda do PDV como comanda
+    path('salvar-comanda-rapida/', views.salvar_comanda_rapida, name='salvar_comanda_rapida'),
 ]

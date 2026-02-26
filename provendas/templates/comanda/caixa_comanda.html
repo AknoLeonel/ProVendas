@@ -19,7 +19,6 @@
                         <div class="card">
                             <div class="card-body">
         
-                                <!-- Primeira linha: Número do Pedido, Vendedor e Status -->
                                 <div class="row py-3">
                                     <div class="col-12 col-md-3 mb-2">
                                         <label for="numero_pedido" class="form-label">Número do Pedido:</label>
@@ -49,24 +48,19 @@
                                     </div>
                                 </div>
         
-                                <!-- Segunda linha: Listagem de Produtos e Caixa -->
                                 <div class="row">
-                                    <!-- Seção de Produtos -->
                                     <div class="col-12 col-md-8 mb-4">
                                         <div class="card py-3">
                                             <div class="card-body d-flex flex-column background-card" style="height: 400px;">
                                                 <div class="row py-2">
                                                     <div class="col">
-                                                        <!-- Contêiner para listar produtos com rolagem -->
                                                         <div id="cart-items" class="overflow-auto" style="max-height: 380px;">
-                                                            <!-- Produtos serão adicionados aqui dinamicamente -->
-                                                        </div>
+                                                            </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
         
-                                        <!-- Botão fixado na parte inferior -->
                                         <div class="mt-auto">
                                             <button class="btn btn-success w-100" onclick="listaProdutos();">
                                                 <i class="fas fa-chair"></i> <strong>ADICIONAR PRODUTO [ Alt + A ]</strong>
@@ -74,21 +68,17 @@
                                         </div>
                                     </div>
         
-                                    <!-- Seção de Resumo (Caixa) -->
                                     <div class="col-12 col-md-4">
                                         <div class="card shadow-sm border-0">
                                             <div class="card-body">
-                                                <!-- Ícone de carrinho grande ao fundo -->
                                                 <div class="row py-2 position-relative">
                                                     <div id="empty-cart-icon" class="empty-cart-icon d-flex justify-content-center align-items-center w-100">
                                                         <i class="fas fa-chair" style="font-size: 80px; color: #ddd;"></i>
                                                     </div>
                                                 </div>
         
-                                                <!-- Título Resumo -->
                                                 <h3 class="text-center text-secondary my-3">COMANDA</h3>
         
-                                                <!-- Campo de Desconto -->
                                                 <div class="row mb-3">
                                                     <div class="col">
                                                         <label for="discount" class="form-label text-muted">Desconto (R$):</label>
@@ -96,7 +86,6 @@
                                                     </div>
                                                 </div>
         
-                                                <!-- Total -->
                                                 <label for="total" class="form-label text-muted">Total:</label>
                                                 <div class="row mb-3">
                                                     <div class="col text-center">
@@ -106,7 +95,6 @@
                                                     </div>
                                                 </div>
         
-                                                <!-- Botão Finalizar -->
                                                 <div class="row mb-2">
                                                     <div class="col">
                                                         <button class="btn btn-success w-100 py-2" onclick="finalizeSale('Finalizado')">
@@ -115,7 +103,6 @@
                                                     </div>
                                                 </div>
         
-                                                <!-- Botão Salvar -->
                                                 <div class="row">
                                                     <div class="col">
                                                         <button class="btn btn-warning w-100 py-2" onclick="finalizeSale('aberta')">
@@ -127,8 +114,7 @@
                                         </div>
                                     </div>
         
-                                </div> <!-- Fim da segunda linha -->
-                            </div>
+                                </div> </div>
                         </div>
                     </div>
                 </div>
@@ -138,14 +124,11 @@
       </div>    
 </div>
 
-<!-- Modal Produtos -->
 <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
-            <div class="modal-header bg-success text-white"> <!-- Estilizando o cabeçalho -->
-                <h5 class="modal-title" id="detalhesModalLabel">Selecionar Produto</h5>
-                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close"> <!-- Cor branca no botão de fechar -->
-                    <span aria-hidden="true">&times;</span>
+            <div class="modal-header bg-success text-white"> <h5 class="modal-title" id="detalhesModalLabel">Selecionar Produto</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
@@ -163,16 +146,13 @@
                     </div>
                 </div>
                 
-                <!-- Container para exibir a lista de produtos em formato de lista -->
                 <div id="product-list" class="d-flex flex-column overflow-auto" style="max-height: 400px;">
-                    <!-- Produtos serão renderizados aqui dinamicamente -->
-                </div>
+                    </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal para Seleção de Forma de Pagamento -->
 <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -189,8 +169,7 @@
                             <div class="col">
                                 <label for="cliente" class="form-label">Cliente:</label>
                                 <input type="text" id="cliente" class="form-control" placeholder="Digite o nome do cliente">
-                                <input type="hidden" id="cliente_id" name="cliente_id"> <!-- Campo oculto para armazenar o ID -->
-                            </div>
+                                <input type="hidden" id="cliente_id" name="cliente_id"> </div>
                         </div>
                         <label for="payment_method" class="form-label">Forma de Pagamento</label>
                         <select id="payment_method" class="form-select form-control" required onchange="toggleCashInput()">
@@ -202,7 +181,6 @@
                         </select>
                     </div>
 
-                    <!-- Checkbox para Dividir a Conta -->
                     <div class="form-group">
                         <div class="custom-control custom-checkbox">
                             <input class="custom-control-input" name="controle_estoque" type="checkbox" id="split-check" onchange="toggleSplitOptions()">
@@ -210,7 +188,6 @@
                         </div>
                     </div>
 
-                    <!-- Opção de dividir -->
                     <div id="split-option" style="display: none;">
                         <label for="num-pessoas" class="form-label">Número de Pessoas:</label>
                         <input type="number" id="num-pessoas" class="form-control" value="1" onchange="updateSplitAmount()" min="1">
@@ -222,25 +199,26 @@
                         </div>
                     </div>
 
-
-                    <!-- Valor Recebido e Botões de Troco Rápido -->
                     <div class="mb-3" id="cash-input" style="display: none;">
                         <label for="cash-received" class="form-label">Valor Recebido (R$)</label>
                         <input type="text" class="form-control" id="cash-received" oninput="calculateChange()" min="0" value="0,00">
                         
                         <div class="quick-cash-buttons mt-2 py-2 text-center">
-                            <button type="button" class="btn btn-success" onclick="setCashReceived(2)">2</button> <!-- Botão de R$ 2,00 -->
+                            <button type="button" class="btn btn-success" onclick="setCashReceived(2)">2</button> 
                             <button type="button" class="btn btn-success" onclick="setCashReceived(5)">5</button>
                             <button type="button" class="btn btn-success" onclick="setCashReceived(10)">10</button>
                             <button type="button" class="btn btn-success" onclick="setCashReceived(20)">20</button>
                             <button type="button" class="btn btn-success" onclick="setCashReceived(50)">50</button>
                             <button type="button" class="btn btn-success" onclick="setCashReceived(100)">100</button>
                             <button type="button" class="btn btn-success" onclick="setCashReceived(200)">200</button>
-                            <button type="button" class="btn btn-danger" onclick="clearCashReceived()">Limpar</button> <!-- Botão para limpar -->
+                            <button type="button" class="btn btn-danger" onclick="clearCashReceived()">Limpar</button>
                         </div>
 
                         <small id="change-output" class="form-text text-center" style="background: #e2e2e2;font-size: xx-large;padding: 2%;border-radius: 0.25rem;color: #009b23;font-weight: 800;">
                             Troco: R$ <span id="change">0,00</span>
+                        </small>
+                        <small id="missing-output" class="form-text text-center text-danger" style="display: none; font-weight: bold;">
+                            Falta: R$ <span id="missing">0,00</span>
                         </small>
                     </div>
 
@@ -254,12 +232,10 @@
 </div>
 
 
-<!-- Modal de Sucesso -->
 <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header justify-content-center">
-                <!-- Ícone de confirmação com animação -->
                 <div id="checkmark-animation" class="checkmark">
                     <div class="checkmark-circle"></div>
                     <div class="checkmark-stem"></div>
@@ -274,12 +250,10 @@
     </div>
 </div>
 
-<!-- Modal de Error -->
 <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header justify-content-center">
-                <!-- Ícone de confirmação com animação -->
                 <div id="error-animation" class="error">
                     <div class="error-circle"></div>
                     <div class="error-stem"></div>
@@ -298,7 +272,6 @@
 
 
 {% block extra_scripts %}
-    <!--Sistema PDV Ajax -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             
@@ -356,8 +329,6 @@
                 dataType: 'json',
                 success: function(data) {
 
-                    {% comment %} console.log('Dados recebidos:', data); {% endcomment %}
-
                     // Aqui você processa os dados retornados pela API
                     document.getElementById('venda_id').value = data.id;
                     document.getElementById('numero_pedido').value = data.numero_pedido;
@@ -385,7 +356,6 @@
                         console.warn('Nenhum produto encontrado para esta venda.');
                     }
         
-                    {% comment %} console.log('Carrinho atualizado:', cart); {% endcomment %}
                 },
                 error: function(xhr, status, error) {
                     console.error('Erro:', error);
@@ -474,7 +444,7 @@
 
         // Atalhos de acesso rápido
         $(document).ready(function() {
-           
+            
             // Evento de atalho para finalizar a venda
             $(document).on('keydown', function(event) {
                 if (event.altKey && event.key === 'f') { // Verifica se Alt + F foi pressionado
@@ -536,15 +506,22 @@
             
             // Atualiza o total sem o símbolo "R$" e com duas casas decimais
             totalElement.innerHTML = total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            
+            // Recalcula o troco caso a modal já esteja aberta e o desconto mude
+            if ($('#paymentModal').is(':visible')) {
+                calculateChange();
+            }
         }
 
         $(document).ready(function () {
             // Resetar campos quando a modal for aberta
             $('#paymentModal').on('show.bs.modal', function () {
-                // Limpar o campo de valor recebido
                 $('#cash-received').val('');
-                // Resetar a exibição do troco
-                $('#change').text('0.00');
+                $('#change').text('0,00');
+                totalCashReceived = 0;
+                
+                // Força a validação inicial do botão de confirmar baseado no método de pagamento atual
+                toggleCashInput(); 
             });
         });
 
@@ -584,15 +561,7 @@
             cart.splice(index, 1);
             renderCart();
         }
-
-        function calculateTotal() {
-            let total = cart.reduce((acc, product) => acc + product.total, 0);
-            const discount = parseFloat(document.getElementById('discount').value) || 0;
-            total = total - discount;
-        
-            // Atualiza o total sem o prefixo "R$"
-            document.getElementById('total').innerText = total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }        
+       
         
         // Sistema de clientes
         $(document).ready(function() {
@@ -826,49 +795,82 @@
             calculateChange(); // Recalcula o troco
         }
 
-        // Função para calcular o troco
+        // Função Matemática de Trava e Cálculo de Troco
         function calculateChange() {
-            const cashReceived = totalCashReceived; // Usa o valor total acumulado
-            const totalAmount = parseFloat(document.getElementById('total').textContent.replace(',', '.')) || 0;
+            const cashInput = document.getElementById('cash-received').value;
+            // Pega o que o usuário digitou ou os botões acumularam
+            let cashReceived = parseFloat(cashInput.replace(',', '.')) || 0; 
+            
+            // Caso o usuário digite no input, a variável global acompanha
+            totalCashReceived = cashReceived; 
+            
+            const totalAmount = parseFloat(document.getElementById('total').textContent.replace('.', '').replace(',', '.')) || 0;
             const change = cashReceived - totalAmount;
 
-            document.getElementById('change').textContent = change >= 0 ? change.toFixed(2).replace('.', ',') : '0,00';
+            const confirmBtn = document.getElementById('confirm-payment');
+            const changeOutput = document.getElementById('change');
+            const missingOutputContainer = document.getElementById('missing-output');
+            const missingOutput = document.getElementById('missing');
+            
+            // Verifica o meio de pagamento selecionado
+            const paymentMethod = document.getElementById('payment_method').value;
+
+            // Se for dinheiro, aplicamos a trava
+            if (paymentMethod === 'Dinheiro') {
+                if (change < 0) {
+                    // Dinheiro insuficiente
+                    changeOutput.textContent = "0,00";
+                    missingOutput.textContent = Math.abs(change).toFixed(2).replace('.', ',');
+                    missingOutputContainer.style.display = 'block';
+                    confirmBtn.disabled = true; // Trava o botão
+                } else {
+                    // Dinheiro exato ou com troco
+                    changeOutput.textContent = change.toFixed(2).replace('.', ',');
+                    missingOutputContainer.style.display = 'none';
+                    confirmBtn.disabled = false; // Libera o botão
+                }
+            } else {
+                // Se for cartão, pix, etc.. não precisamos calcular troco e libera o botão
+                changeOutput.textContent = "0,00";
+                missingOutputContainer.style.display = 'none';
+                if(paymentMethod !== "") {
+                    confirmBtn.disabled = false;
+                } else {
+                    confirmBtn.disabled = true;
+                }
+            }
         }
 
         // Função para limpar o valor recebido
         function clearCashReceived() {
             totalCashReceived = 0; // Reseta o total recebido
             document.getElementById('cash-received').value = '0,00'; // Limpa o campo de entrada
-            calculateChange(); // Atualiza o troco para 0,00
+            calculateChange(); // Atualiza a verificação da trava
         }
 
         // Evento para exibir/ocultar o campo de valor recebido com base na forma de pagamento
         function toggleCashInput() {
             // Obtém o valor selecionado da forma de pagamento
             var paymentMethod = document.getElementById('payment_method').value;
+            var confirmBtn = document.getElementById('confirm-payment');
             
             // Verifica se a opção selecionada é "Dinheiro"
             if (paymentMethod === 'Dinheiro') {
                 // Exibe o campo de entrada para o valor em dinheiro
                 document.getElementById('cash-input').style.display = 'block';
+                calculateChange(); // Roda a checagem da trava
             } else {
                 // Oculta o campo de entrada para o valor em dinheiro
                 document.getElementById('cash-input').style.display = 'none';
+                clearCashReceived(); // Limpa e já recalcula (o que libera o botão)
+                
+                if(paymentMethod !== "") {
+                    confirmBtn.disabled = false; // Se for cartão/pix e não for vazio, libera.
+                }
             }
         }
 
-        // Evento para exibir/ocultar o campo de valor recebido com base na forma de pagamento
-        document.getElementById('payment_method').addEventListener('change', function() {
-            const paymentMethod = this.value;
-            const cashInput = document.getElementById('cash-input');
-
-            if (paymentMethod === 'Dinheiro') {
-                cashInput.style.display = 'block';
-            } else {
-                cashInput.style.display = 'none';
-                clearCashReceived(); // Limpa o valor recebido se o método de pagamento não for dinheiro
-            }
-        });
+        // O evento de change do Select já chama toggleCashInput, então removemos a duplicação.
 
 
         // Define mesaId como uma variável global
@@ -1056,9 +1058,6 @@
                 setTimeout(() => {
                     $('#errorModal').modal('hide');
                 }, 2000);
-            })
-            .finally(() => {
-                $('#paymentModal').modal('hide');
             });
         }
 
