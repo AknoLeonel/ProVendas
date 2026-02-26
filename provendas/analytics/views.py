@@ -10,8 +10,8 @@ from django.views.decorators.cache import cache_page
 
 
 def relatorio_vendas(request):
-    
     return render(request, "analytics/analytics_avancado.html")
+
 
 def relatorio_vendas_ajax(request):
     if request.method == "GET":
@@ -40,19 +40,28 @@ def relatorio_vendas_ajax(request):
             filtro["created_at__lte"] = data_fim
 
         # Total de vendas por método de pagamento
-        vendas_por_metodo_pagamento = list(
+        vendas_brutas = list(
             CaixaPdv.objects.filter(**filtro)
             .values("payment_method")
             .annotate(total_vendas=Sum("total"), quantidade=Count("id"))
             .order_by("-total_vendas")
         )
+        
+        # CORREÇÃO: Força a conversão para float para o Javascript não quebrar
+        vendas_por_metodo_pagamento = []
+        for v in vendas_brutas:
+            vendas_por_metodo_pagamento.append({
+                "payment_method": v["payment_method"],
+                "total_vendas": float(v["total_vendas"] or 0),
+                "quantidade": v["quantidade"]
+            })
 
-       # Produtos mais vendidos
-        produtos_mais_vendidos = list(
+        # Produtos mais vendidos
+        produtos_brutos = list(
             ProdutoCaixaPdv.objects.filter(caixa_pdv__created_at__gte=data_inicio, caixa_pdv__created_at__lte=data_fim)
             .values(
                 produto_nome=F("produto__nome"),
-                preco_venda=F("produto__preco_de_venda")  # Incluindo o valor do produto
+                preco_venda=F("produto__preco_de_venda")
             )
             .annotate(
                 total_vendido=Sum("quantidade"),
@@ -61,14 +70,29 @@ def relatorio_vendas_ajax(request):
             .order_by("-total_vendido")
         )
 
-        # Total geral de vendas e receita
-        total_vendas = CaixaPdv.objects.filter(**filtro).aggregate(
-            receita_total=Sum("total"), quantidade_total=Sum("subtotal")
-        )
+        # CORREÇÃO: Força a conversão para float
+        produtos_mais_vendidos = []
+        for p in produtos_brutos:
+            produtos_mais_vendidos.append({
+                "produto_nome": p["produto_nome"],
+                "preco_venda": float(p["preco_venda"] or 0),
+                "total_vendido": p["total_vendido"],
+                "receita_total": float(p["receita_total"] or 0)
+            })
 
-        # Garantir que os valores não sejam None
-        total_vendas["receita_total"] = total_vendas["receita_total"] or 0
-        total_vendas["quantidade_total"] = total_vendas["quantidade_total"] or 0
+        # Total geral de vendas e receita (calculando tudo do CaixaPdv direto)
+        receita_total = CaixaPdv.objects.filter(**filtro).aggregate(Sum('total'))['total__sum'] or 0
+        
+        # Como o seu modelo CaixaPdv parece não ter o campo 'subtotal', vamos contar a quantidade total de itens vendidos no período
+        quantidade_total = ProdutoCaixaPdv.objects.filter(
+            caixa_pdv__created_at__gte=data_inicio, 
+            caixa_pdv__created_at__lte=data_fim
+        ).aggregate(Sum('quantidade'))['quantidade__sum'] or 0
+
+        total_vendas = {
+            "receita_total": float(receita_total),
+            "quantidade_total": float(quantidade_total)
+        }
 
         # Dados a serem retornados
         data = {
@@ -77,6 +101,7 @@ def relatorio_vendas_ajax(request):
             "total_vendas": total_vendas,
         }
         return JsonResponse(data, safe=False)
+        
     return JsonResponse({"error": "Método não permitido"}, status=405)
 
 
@@ -160,18 +185,18 @@ def analytics_desboard(request):
 
     # Preparar os dados para o gráfico
     nomes_produtos = [produto.nome for produto in produtos_estoque_baixo]
-    quantidades_estoque = [produto.quantidade_estoque for produto in produtos_estoque_baixo]
+    quantidades_estoque = [float(produto.quantidade_estoque or 0) for produto in produtos_estoque_baixo]
 
 
     # Convertendo os valores de Decimal para float
     produtos_nomes = [produto['produto__nome'] for produto in produtos_mais_vendidos]
-    produtos_quantidades = [float(produto['quantidade_total']) for produto in produtos_mais_vendidos]
-    produtos_valores = [float(produto['valor_total']) for produto in produtos_mais_vendidos]
+    produtos_quantidades = [float(produto['quantidade_total'] or 0) for produto in produtos_mais_vendidos]
+    produtos_valores = [float(produto['valor_total'] or 0) for produto in produtos_mais_vendidos]
 
     return render(request, 'analytics/analytics_desboard.html', {
-        'pedidos_finalizados': pedidos_finalizados,
-        'total_vendas_mes': total_vendas_mes,
-        'total_produtos': total_produtos,
+        'pedidos_finalizados': float(pedidos_finalizados or 0),
+        'total_vendas_mes': float(total_vendas_mes or 0),
+        'total_produtos': float(total_produtos or 0),
         'vendas_mes': vendas_mes,
         'meses': meses,
         'anos': anos,  # Passando a lista de anos para o template
@@ -188,5 +213,3 @@ def analytics_desboard(request):
         'nomes_produtos': nomes_produtos,
         'quantidades_estoque': quantidades_estoque,
     })
-
-
